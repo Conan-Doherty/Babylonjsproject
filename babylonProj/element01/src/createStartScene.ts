@@ -16,7 +16,8 @@ import {
     Texture,
     Vector4,
     SpotLight,
-    Color3
+    Color3,
+    CubeTexture
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -71,7 +72,16 @@ import {
     sphere.position.y = 1;
     return sphere;
   }
-  
+  function createskybox(scene:Scene){
+    var skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+	var skyboxMaterial = new StandardMaterial("skyBox", scene);
+	skyboxMaterial.backFaceCulling = false;
+	skyboxMaterial.reflectionTexture = new CubeTexture("assets/fantastic-cloudscape_1232-490.jpg", scene);
+	skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+	skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+	skyboxMaterial.specularColor = new Color3(0, 0, 0);
+	skybox.material = skyboxMaterial;	
+  }
   function createGround(scene: Scene) {
     let ground = MeshBuilder.CreateGround(
       "ground",
@@ -108,7 +118,8 @@ import {
       sphere?: Mesh;
       ground?: Mesh;
       camera?: Camera;
-      spotlight?:SpotLight
+      spotlight?:SpotLight;
+      
     }
   
     let that: SceneData = { scene: new Scene(engine) };
@@ -122,6 +133,6 @@ import {
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
     that.facebox = createfacedbox(that.scene,6,2,8);
-
+    createskybox(that.scene);
     return that;
   }
