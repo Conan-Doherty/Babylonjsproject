@@ -70,16 +70,17 @@ import {
       scene,
     );
     sphere.position.y = 1;
+    sphere.outlineColor = new Color3(1,0,1);
     return sphere;
   }
   function createskybox(scene:Scene){
     var skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
 	var skyboxMaterial = new StandardMaterial("skyBox", scene);
 	skyboxMaterial.backFaceCulling = false;
-	skyboxMaterial.reflectionTexture = new CubeTexture("assets/fantastic-cloudscape_1232-490.jpg", scene);
+	skyboxMaterial.reflectionTexture = new CubeTexture("babylonProj/element01/assets/photo-field-with-clouds-blue-sky_188544-18646.jpg", scene);
 	skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
-	skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
-	skyboxMaterial.specularColor = new Color3(0, 0, 0);
+	skyboxMaterial.diffuseColor = new Color3(0.05, 0.93, 0.81);
+	skyboxMaterial.specularColor = new Color3(0.86, 0.87, 0.11);
 	skybox.material = skyboxMaterial;	
   }
   function createGround(scene: Scene) {
