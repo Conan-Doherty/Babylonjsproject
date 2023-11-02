@@ -17,7 +17,9 @@ import {
     Vector4,
     SpotLight,
     Color3,
-    CubeTexture
+    CubeTexture,
+    Sprite,
+    SpriteManager
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -73,6 +75,32 @@ import {
     sphere.outlineColor = new Color3(1,0,1);
     return sphere;
   }
+  function createheightmap(scene: Scene){
+    var groundMaterial = new StandardMaterial("ground", scene);
+    groundMaterial.diffuseTexture = new Texture("assets/watercolor-world-map_125540-800.jpg", scene);
+
+    var ground = Mesh.CreateGroundFromHeightMap("ground", "assets/grayscale.jpg", 200, 200, 100, 0, 1.5, scene, false);
+    ground.material = groundMaterial;
+    return scene;
+  }
+  function createTrees(scene: Scene) {
+    const spriteManagerTrees = new SpriteManager("treesManager", 
+   "assets/palmtree.png", 2000, {width: 512, height: 1024}, scene);
+    //We create trees at random positions
+    for (let i = 0; i < 500; i++) {
+    const tree = new Sprite("tree", spriteManagerTrees);
+    tree.position.x = Math.random() * (-30);
+    tree.position.z = Math.random() * 20 + 8; 
+    tree.position.y = 0.5; 
+    } 
+    for (let i = 0; i < 500; i++) {
+    const tree = new Sprite("tree", spriteManagerTrees);
+    tree.position.x = Math.random() * (25) + 7; 
+    tree.position.z = Math.random() * -35 + 8; 
+    tree.position.y = 0.5; 
+    } 
+    return spriteManagerTrees; 
+    } 
   function createskybox(scene:Scene){
     
     var skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
@@ -123,20 +151,16 @@ import {
       ground?: Mesh;
       camera?: Camera;
       spotlight?:SpotLight;
-      
+      trees?:SpriteManager;
     }
   
     let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
-  //create box with pos in first three and scale in last three digits
-    
-    that.box = createBox(that.scene,2,5,3,10,5,2);
-    that.spotlight = createspotlight(that.scene,0,6,0);
     that.light = createLight(that.scene);
-    that.sphere = createSphere(that.scene);
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
-    that.facebox = createfacedbox(that.scene,6,2,8);
+    that.trees = createTrees(that.scene);
+    createheightmap(that.scene);
     createskybox(that.scene);
     return that;
   }
