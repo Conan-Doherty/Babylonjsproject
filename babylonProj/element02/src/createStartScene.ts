@@ -77,9 +77,9 @@ import {
   }
   function createheightmap(scene: Scene){
     var groundMaterial = new StandardMaterial("ground", scene);
-    groundMaterial.diffuseTexture = new Texture("assets/watercolor-world-map_125540-800.jpg", scene);
+    groundMaterial.diffuseTexture = new Texture("assets/scotland_texture.JPG", scene);
 
-    var ground = Mesh.CreateGroundFromHeightMap("ground", "assets/grayscale.jpg", 200, 200, 100, 0, 1.5, scene, false);
+    var ground = Mesh.CreateGroundFromHeightMap("ground", "assets/scotland_texture_invertedgrayscale.jpg", 200, 200, 3500, 0, 3, scene, false);
     ground.material = groundMaterial;
     return scene;
   }
@@ -87,17 +87,17 @@ import {
     const spriteManagerTrees = new SpriteManager("treesManager", 
    "assets/palmtree.png", 2000, {width: 512, height: 1024}, scene);
     //We create trees at random positions
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 150; i++) {
     const tree = new Sprite("tree", spriteManagerTrees);
-    tree.position.x = Math.random() * (-30);
-    tree.position.z = Math.random() * 20 + 8; 
-    tree.position.y = 0.5; 
+    tree.position.x = Math.random() * (-18);
+    tree.position.z = Math.random() * 18; 
+    tree.position.y = 1.5; 
     } 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 250; i++) {
     const tree = new Sprite("tree", spriteManagerTrees);
-    tree.position.x = Math.random() * (25) + 7; 
-    tree.position.z = Math.random() * -35 + 8; 
-    tree.position.y = 0.5; 
+    tree.position.x = Math.random() * (40) + 10; 
+    tree.position.z = Math.random() * 60 + 8; 
+    tree.position.y = 1.5; 
     } 
     return spriteManagerTrees; 
     } 

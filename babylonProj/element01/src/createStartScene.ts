@@ -17,7 +17,8 @@ import {
     Vector4,
     SpotLight,
     Color3,
-    CubeTexture
+    CubeTexture,
+    Space
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -48,6 +49,10 @@ import {
     let box = MeshBuilder.CreateBox("tiledbox",options,scene);
     box.material = mat;
     box.position = new Vector3(px,py,pz);
+    scene.registerAfterRender(function () {
+      box.rotate(new Vector3(2, 6, 4)/*axis*/,
+      .2/*angle*/, Space.LOCAL);
+      });
     return box;
   }
   
