@@ -18,7 +18,10 @@ import {
     SpotLight,
     Color3,
     CubeTexture,
-    Space
+    Space,
+    DirectionalLight,
+    ShadowGenerator,
+    
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -26,6 +29,7 @@ import {
     let box = MeshBuilder.CreateBox("box",{size: 1}, scene);
     box.position = new Vector3(px,py,pz);
     box.scaling = new Vector3(sx,sy,sz);
+    box.receiveShadows = true;
     return box;
   }
   //faced box function
@@ -53,19 +57,39 @@ import {
       box.rotate(new Vector3(2, 6, 4)/*axis*/,
       .2/*angle*/, Space.LOCAL);
       });
+      //box.receiveShadows = true;
     return box;
   }
   
   function createLight(scene: Scene) {
     const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
+    
     return light;
   }
+  function createdirectionallight(scene: Scene, mesh1:Mesh,mesh2:Mesh){
+    var light = new DirectionalLight("dir01", new Vector3(-1, -1, -1), scene);
+	light.position = new Vector3(20, 20, 20);
+	light.intensity = 0.5;
+   light.diffuse = new Color3(0.07, 0.87, 0.87);
+    var lightSphere = Mesh.CreateSphere("sphere", 10, 2, scene);
+    var lightspheremat = new StandardMaterial("lightspheremat",scene)
+   	lightSphere.position = light.position;
+	  lightSphere.material = new StandardMaterial("light", scene);
+    var shadowGenerator = new ShadowGenerator(1024, light);
+    shadowGenerator.addShadowCaster(mesh1);
+    shadowGenerator.addShadowCaster(mesh2);
+    shadowGenerator.useExponentialShadowMap = true;
+   //(1, 1, 0);
+     light.intensity = 1;
+  }
+  
   function createspotlight(scene: Scene,px:number,py:number,pz:number){
     var light = new SpotLight("spotLight", new Vector3(-1, 1, -1), new Vector3(0, -1, 0), Math.PI / 2, 10, scene);
     light.diffuse = new Color3(0.02, 0.97, 0.81);
     light.specular = new Color3(1, 1, 1);
     light.intensity = 2;
+    
     return light;
   }
   function createSphere(scene: Scene) {
@@ -76,6 +100,7 @@ import {
     );
     sphere.position.y = 1;
     sphere.outlineColor = new Color3(1,0,1);
+    sphere.receiveShadows = true;
     return sphere;
   }
   function createskybox(scene:Scene){
@@ -97,6 +122,7 @@ import {
       { width: 6, height: 6 },
       scene,
     );
+    ground.receiveShadows = true;
     return ground;
   }
   
@@ -134,14 +160,15 @@ import {
     let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
   //create box with pos in first three and scale in last three digits
-    
-    that.box = createBox(that.scene,2,5,3,10,5,2);
-    that.spotlight = createspotlight(that.scene,0,6,0);
-    that.light = createLight(that.scene);
-    that.sphere = createSphere(that.scene);
+  that.box = createBox(that.scene,2,5,3,10,5,2);
+  that.sphere = createSphere(that.scene);
+   // that.spotlight = createspotlight(that.scene,0,6,0);
+    //that.light = createLight(that.scene);
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
-    that.facebox = createfacedbox(that.scene,6,2,8);
+    that.facebox = createfacedbox(that.scene,6,5,8);
     createskybox(that.scene);
+   createdirectionallight(that.scene,that.facebox,that.sphere);
+    
     return that;
   }

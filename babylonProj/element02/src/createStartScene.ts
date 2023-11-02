@@ -19,7 +19,9 @@ import {
     Color3,
     CubeTexture,
     Sprite,
-    SpriteManager
+    SpriteManager,
+    DirectionalLight,
+    ShadowGenerator
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -71,16 +73,19 @@ import {
       { diameter: 2, segments: 32 },
       scene,
     );
-    sphere.position.y = 1;
+    sphere.position.y = 10;
+    sphere.position.x = 10;
     sphere.outlineColor = new Color3(1,0,1);
+    //sphere.receiveShadows = true;
     return sphere;
   }
   function createheightmap(scene: Scene){
     var groundMaterial = new StandardMaterial("ground", scene);
     groundMaterial.diffuseTexture = new Texture("assets/scotland_texture.JPG", scene);
 
-    var ground = Mesh.CreateGroundFromHeightMap("ground", "assets/scotland_texture_invertedgrayscale.jpg", 200, 200, 3500, 0, 3, scene, false);
+    var ground = Mesh.CreateGroundFromHeightMap("ground", "assets/scotland_texture_invertedgrayscale.jpg", 200, 200, 3000, 0, 3, scene, false);
     ground.material = groundMaterial;
+    ground.receiveShadows = true;
     return scene;
   }
   function createTrees(scene: Scene) {
@@ -122,6 +127,22 @@ import {
     );
     return ground;
   }
+  function createdirectionallight(scene: Scene, mesh1:Mesh){
+    var light = new DirectionalLight("dir01", new Vector3(-1, -1, -1), scene);
+	light.position = new Vector3(20, 20, 20);
+	light.intensity = 0.5;
+   light.diffuse = new Color3(0.07, 0.87, 0.87);
+    var lightSphere = Mesh.CreateSphere("sphere", 10, 2, scene);
+    var lightspheremat = new StandardMaterial("lightspheremat",scene)
+   	lightSphere.position = light.position;
+	  lightSphere.material = new StandardMaterial("light", scene);
+    var shadowGenerator = new ShadowGenerator(1024, light);
+    shadowGenerator.addShadowCaster(mesh1);
+    
+    shadowGenerator.useExponentialShadowMap = true;
+   //(1, 1, 0);
+     light.intensity = 1;
+  }
   
   function createArcRotateCamera(scene: Scene) {
     let camAlpha = -Math.PI / 2,
@@ -139,6 +160,20 @@ import {
     camera.attachControl(true);
     return camera;
   }
+  function CreatePin(scene:Scene,px:number,pz:number){
+    const needle = MeshBuilder.CreateCylinder("cone",{diameterBottom:0,tessellation:20,height:2,diameterTop:1},scene);
+    const pintop = MeshBuilder.CreateCylinder("pintop",{diameter:1.25,height:0.5},scene);
+    var pinmat = new StandardMaterial("pinmat",scene);
+    pinmat.diffuseColor = new Color3(1, 0.28, 0);
+    needle.material = pinmat;
+    pintop.material = pinmat;
+    pintop.position.y = 1;
+    const Pin = Mesh.MergeMeshes([needle,pintop]);
+    Pin.position.y = 1;
+    Pin.position.x = px;
+    Pin.position.z = pz;
+    return Scene;
+  } 
   //------------------------------------------
   //bottom of code - main rendering area for scene
   export default function createStartScene(engine: Engine) {
@@ -152,15 +187,18 @@ import {
       camera?: Camera;
       spotlight?:SpotLight;
       trees?:SpriteManager;
+     
     }
   
     let that: SceneData = { scene: new Scene(engine) };
+    CreatePin(that.scene,-19,-70);
     that.scene.debugLayer.show();
     that.light = createLight(that.scene);
-    that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
     that.trees = createTrees(that.scene);
+    that.sphere = createSphere(that.scene);
     createheightmap(that.scene);
     createskybox(that.scene);
+    createdirectionallight(that.scene,that.sphere);
     return that;
   }
