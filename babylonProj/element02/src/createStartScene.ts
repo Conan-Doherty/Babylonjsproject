@@ -21,7 +21,7 @@ import {
     Sprite,
     SpriteManager,
     DirectionalLight,
-    ShadowGenerator
+    ShadowGenerator,
   } from "@babylonjs/core";
   //--------------------------------------------
   //middle of code - functions
@@ -119,6 +119,7 @@ import {
         
       return scene;
   }
+  
   function createGround(scene: Scene) {
     let ground = MeshBuilder.CreateGround(
       "ground",
@@ -169,11 +170,23 @@ import {
     pintop.material = pinmat;
     pintop.position.y = 1;
     const Pin = Mesh.MergeMeshes([needle,pintop]);
+    Pin.name = ("Pin");
+    
+    needle.dispose;
+    pintop.dispose;
     Pin.position.y = 1;
     Pin.position.x = px;
     Pin.position.z = pz;
-    return Scene;
+    
+    return scene;
   } 
+  function CreateClone(scene:Scene,name:string,px:number,pz:number){
+    var mesh = scene.getNodeByName("Pin");
+    const Clone = mesh.clone("clone");
+    Clone.position.x = px;
+    Clone.position.z = pz;
+    return scene;
+  }
   //------------------------------------------
   //bottom of code - main rendering area for scene
   export default function createStartScene(engine: Engine) {
@@ -187,11 +200,12 @@ import {
       camera?: Camera;
       spotlight?:SpotLight;
       trees?:SpriteManager;
-     
+      
     }
   
     let that: SceneData = { scene: new Scene(engine) };
     CreatePin(that.scene,-19,-70);
+    CreateClone(that.scene,"Pin",2,4);
     that.scene.debugLayer.show();
     that.light = createLight(that.scene);
     that.camera = createArcRotateCamera(that.scene);
