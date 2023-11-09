@@ -230,7 +230,8 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
     if (!animating) {
       
       if(shiftdown){
-        animating = true; 
+        animating = true;
+         
         scene.beginAnimation(skeleton,runRange.from,runRange.to,true);
         
       }
