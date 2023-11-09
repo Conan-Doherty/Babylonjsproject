@@ -169,23 +169,21 @@ import {
     needle.material = pinmat;
     pintop.material = pinmat;
     pintop.position.y = 1;
-    const Pin = Mesh.MergeMeshes([needle,pintop]);
+    const Pin:any = Mesh.MergeMeshes([needle,pintop],true,false,undefined,false,true);
     Pin.name = ("Pin");
-    
-    needle.dispose;
-    pintop.dispose;
     Pin.position.y = 1;
     Pin.position.x = px;
     Pin.position.z = pz;
     
-    return scene;
+    return Pin;
   } 
-  function CreateClone(scene:Scene,name:string,px:number,pz:number){
-    var mesh = scene.getNodeByName("Pin");
-    const Clone = mesh.clone("clone");
+  function ClonePin(scene:Scene,px:number,pz:number){
+    const tobecloned = CreatePin(scene,px,pz)
+    const Clone = tobecloned.clone("clone");
+    tobecloned.dispose();
     Clone.position.x = px;
     Clone.position.z = pz;
-    return scene;
+    return Clone;
   }
   //------------------------------------------
   //bottom of code - main rendering area for scene
@@ -200,12 +198,14 @@ import {
       camera?: Camera;
       spotlight?:SpotLight;
       trees?:SpriteManager;
-      
+      Pin?:Mesh;
+      Clone?:Mesh;
     }
   
     let that: SceneData = { scene: new Scene(engine) };
-    CreatePin(that.scene,-19,-70);
-    CreateClone(that.scene,"Pin",2,4);
+    
+    ClonePin(that.scene,-19,-70);
+    ClonePin(that.scene,19,-70);
     that.scene.debugLayer.show();
     that.light = createLight(that.scene);
     that.camera = createArcRotateCamera(that.scene);
