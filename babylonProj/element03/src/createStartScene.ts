@@ -27,8 +27,13 @@ import {
     Animation,
     AnimationPropertiesOverride,
     Skeleton,
-
+    AnimationGroup,
+    
+    
+    
   } from "@babylonjs/core";
+import { sceneUboDeclaration } from "@babylonjs/core/Shaders/ShadersInclude/sceneUboDeclaration";
+import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoaderAnimation";
   //--------------------------------------------
   //middle of code - functions
   function createBox(scene: Scene, px:number,py:number,pz:number,sx:number,sy:number,sz:number) {
@@ -67,6 +72,8 @@ import {
     return box;
   }
   
+   
+
   function createLight(scene: Scene) {
     const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
@@ -152,6 +159,8 @@ import {
     camera.attachControl(true);
     return camera;
   }
+ 
+
   let keyDownMap: any[] = [];
   let currentspeed:number = 0.1;
   let walkspeed:number = 0.1; 
@@ -172,7 +181,15 @@ let walkRange: any = skeleton.getAnimationRange("YBot_Walk");
 let runRange: any = skeleton.getAnimationRange("YBot_Run");
 let leftRange: any = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
 let rightRange: any = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-let idleRange: any = skeleton.getAnimationRange("YBot_Idle"); 
+let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
+/*
+var idleanim = scene.animationGroups.find(a=>a.name === "YBot_Idle");
+var idlepara = {name:"idle",anim:idleanim,weight:1};
+var walkanim = scene.animationGroups.find(a=>a.name === "YBot_Walk");
+var walkpara = {name:"walk",anim:idleanim,weight:1};
+var runanim = scene.animationGroups.find(a=>a.name === "YBot_Run");
+var runpara = {name:"Run",anim:idleanim,weight:1};
+*/
  scene.onBeforeRenderObservable.add(()=> { 
   let keydown: boolean = false;
   let shiftdown:boolean = false;
@@ -201,14 +218,29 @@ let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
     currentspeed = runspeed; 
     shiftdown = true;
   }
+  else if(!keydown){
+     currentspeed = 0;
+  }
   else{
      currentspeed = walkspeed;
      shiftdown = false;
   }
+
   if (keydown) {
     if (!animating) {
-    animating = true; 
-    scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
+      
+      if(shiftdown){
+        animating = true; 
+        scene.beginAnimation(skeleton,runRange.from,runRange.to,true);
+        
+      }
+      else{
+        animating = true; 
+        
+        scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
+      }
+    
+    
     } 
    } else { 
     animating = false; 
@@ -243,6 +275,7 @@ let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
   //------------------------------------------
   //bottom of code - main rendering area for scene
   export default function createStartScene(engine: Engine) {
+    
     interface SceneData {
       facebox? : Mesh;
       scene: Scene;
@@ -254,10 +287,12 @@ let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
       spotlight?:SpotLight;
       importMesh?:any;
       actionManager?:any;
+      
     }
   
     let that: SceneData = { scene: new Scene(engine) };
-    that.scene.debugLayer.show();
+    that.scene.debugLayer.show()
+    
   //create box with pos in first three and scale in last three digits
    // that.box = createBox(that.scene,2,5,3,10,5,2);
     that.sphere = createSphere(that.scene,1,4,7);
