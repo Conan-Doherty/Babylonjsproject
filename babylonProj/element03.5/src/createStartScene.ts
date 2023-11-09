@@ -28,7 +28,7 @@ import {
     AnimationPropertiesOverride,
     Skeleton,
     AnimationGroup,
-    
+    Animatable
     
     
   } from "@babylonjs/core";
@@ -177,19 +177,15 @@ skeleton.animationPropertiesOverride = new AnimationPropertiesOverride();
 skeleton.animationPropertiesOverride.enableBlending = true; 
 skeleton.animationPropertiesOverride.blendingSpeed = 0.05; 
 skeleton.animationPropertiesOverride.loopMode = 1;
-let walkRange: any = skeleton.getAnimationRange("YBot_Walk");
-let runRange: any = skeleton.getAnimationRange("YBot_Run");
-let leftRange: any = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-let rightRange: any = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
-/*
-var idleanim = scene.animationGroups.find(a=>a.name === "YBot_Idle");
-var idlepara = {name:"idle",anim:idleanim,weight:1};
-var walkanim = scene.animationGroups.find(a=>a.name === "YBot_Walk");
-var walkpara = {name:"walk",anim:idleanim,weight:1};
-var runanim = scene.animationGroups.find(a=>a.name === "YBot_Run");
-var runpara = {name:"Run",anim:idleanim,weight:1};
-*/
+
+var idleAnim = scene.beginWeightedAnimation(skeleton, 0, 89, 1.0, true);
+var walkAnim = scene.beginWeightedAnimation(skeleton, 90, 118, 0, true);
+var runAnim = scene.beginWeightedAnimation(skeleton, 119, 135, 0, true);
+var params = [
+  {name: "Idle", anim: idleAnim},
+  {name: "Walk", anim: walkAnim},
+  {name: "Run", anim: runAnim}
+]
  scene.onBeforeRenderObservable.add(()=> { 
   let keydown: boolean = false;
   let shiftdown:boolean = false;
@@ -231,7 +227,7 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
       
       if(shiftdown){
         animating = true; 
-        scene.beginAnimation(skeleton,runRange.from,runRange.to,true);
+        param.anim.weight
         
       }
       else{
