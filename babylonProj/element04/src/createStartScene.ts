@@ -28,9 +28,7 @@ import {
     AnimationPropertiesOverride,
     Skeleton,
     AnimationGroup,
-    PlayAnimationAction,
-    StopAnimationAction,
-    AnimationRange
+    
     
     
   } from "@babylonjs/core";
@@ -149,7 +147,7 @@ import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoa
     let camAlpha = -Math.PI / 2,
       camBeta = Math.PI / 2.5,
       camDist = 10,
-      camTarget = new Vector3(0,0,0);
+      camTarget = new Vector3(0, 0, 0);
     let camera = new ArcRotateCamera(
       "camera1",
       camAlpha,
@@ -167,85 +165,91 @@ import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoa
   let currentspeed:number = 0.1;
   let walkspeed:number = 0.1; 
   let runspeed:number = 0.3;
-  let animating = true; 
-  function importPlayerMesh(scene, px: number, py: number) 
-  {
-    let tempItem = { flag: false } 
-    let item = SceneLoader.ImportMesh("", "./Models/", "dummy3.babylon", scene,
-    function(newMeshes, particleSystems, skeletons) 
-    {
-      let mesh = newMeshes[0];
-      let skeleton = skeletons[0];
-      skeleton.animationPropertiesOverride = new AnimationPropertiesOverride();
-      skeleton.animationPropertiesOverride.enableBlending = true; 
-      skeleton.animationPropertiesOverride.blendingSpeed = 0.05;
-      skeleton.animationPropertiesOverride.loopMode = 1; 
-      let walkRange: any = skeleton.getAnimationRange("YBot_Walk");
-       let runRange: any = skeleton.getAnimationRange("YBot_Run");
-      // let leftRange: any = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
-      // let rightRange: any = skeleton.getAnimationRange("YBot_RightStrafeWalk");
-      // let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
+function importPlayerMesh(scene, x: number, y: number) {
+let tempItem = { flag: false } 
 
-      let animating: boolean = false; 
-
-      scene.onBeforeRenderObservable.add(()=> 
-      { 
-        let keydown: boolean = false; 
-        let shiftdown: boolean = false; 
-
-
-        if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
-        mesh.position.z += currentspeed; 
-        mesh.rotation.y = 0; 
-        keydown = true; 
-
-        } 
-        if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
-        mesh.position.x -= currentspeed; 
-        mesh.rotation.y = 3 * Math.PI / 2; 
-        keydown = true; 
-
-        } 
-        if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
-        mesh.position.z -= currentspeed; 
-        mesh.rotation.y = 2 * Math.PI / 2; 
-        keydown = true; 
-
-        } 
-        if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
-        mesh.position.x += currentspeed; 
-        mesh.rotation.y = Math.PI / 2; 
-        keydown = true; 
-
-        }
-        if(keyDownMap["Shift"] || keyDownMap["LeftShift"] )
-        {
-          currentspeed = runspeed;
-          shiftdown = true;
-        }
-        else
-        {
-          currentspeed = walkspeed;
-          shiftdown = false;
-        }
-        if (keydown){
-          if (!animating){
-            animating = true;
-            scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
-          } 
-          else if (keydown && shiftdown)
-          {
-            animating = true;
-            scene.beginAnimation(skeleton, runRange.from, runRange.to, true )
-          }
-      } else { 
-              animating = false; 
-              scene.stopAnimation(skeleton);
-            }
-      })
-    });
-    return item;
+ let item = SceneLoader.ImportMesh("", "./Models/", "dummy3.babylon", scene, 
+function(newMeshes,particleSystems,skeletons) {
+  let animating: boolean = false; 
+let mesh = newMeshes[0]; 
+let skeleton = skeletons[0];
+skeleton.animationPropertiesOverride = new AnimationPropertiesOverride();
+skeleton.animationPropertiesOverride.enableBlending = true; 
+skeleton.animationPropertiesOverride.blendingSpeed = 0.05; 
+skeleton.animationPropertiesOverride.loopMode = 1;
+let walkRange: any = skeleton.getAnimationRange("YBot_Walk");
+let runRange: any = skeleton.getAnimationRange("YBot_Run");
+let leftRange: any = skeleton.getAnimationRange("YBot_LeftStrafeWalk");
+let rightRange: any = skeleton.getAnimationRange("YBot_RightStrafeWalk");
+let idleRange: any = skeleton.getAnimationRange("YBot_Idle");
+/*
+var idleanim = scene.animationGroups.find(a=>a.name === "YBot_Idle");
+var idlepara = {name:"idle",anim:idleanim,weight:1};
+var walkanim = scene.animationGroups.find(a=>a.name === "YBot_Walk");
+var walkpara = {name:"walk",anim:idleanim,weight:1};
+var runanim = scene.animationGroups.find(a=>a.name === "YBot_Run");
+var runpara = {name:"Run",anim:idleanim,weight:1};
+*/
+ scene.onBeforeRenderObservable.add(()=> { 
+  let keydown: boolean = false;
+  let shiftdown:boolean = false;
+  
+  if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
+  mesh.position.z += currentspeed; 
+  mesh.rotation.y = 0; 
+  keydown = true; 
+  } 
+  if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
+  mesh.position.x -= currentspeed; 
+  mesh.rotation.y = 3 * Math.PI / 2; 
+  keydown = true; 
+  } 
+  if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
+  mesh.position.z -= currentspeed; 
+  mesh.rotation.y = 2 * Math.PI / 2; 
+  keydown = true; 
+  } 
+  if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
+  mesh.position.x += currentspeed; 
+  mesh.rotation.y = Math.PI / 2; 
+  keydown = true; 
   }
+  if(keyDownMap["Shift"] || keyDownMap["LeftShift"]) {
+    currentspeed = runspeed; 
+    shiftdown = true;
+  }
+  else if(!keydown){
+     currentspeed = 0;
+  }
+  else{
+     currentspeed = walkspeed;
+     shiftdown = false;
+  }
+
+  if (keydown) {
+    if (!animating) {
+      
+      if(shiftdown){
+        animating = true;
+         
+        scene.beginAnimation(skeleton,runRange.from,runRange.to,true);
+        
+      }
+      else{
+        animating = true; 
+        
+        scene.beginAnimation(skeleton, walkRange.from, walkRange.to, true);
+      }
+    
+    
+    } 
+   } else { 
+    animating = false; 
+    scene.stopAnimation(skeleton);
+   } 
+ })})
+ return item;
+}
  function actionManager(scene: Scene){
   scene.actionManager = new ActionManager(scene);
   scene.actionManager.registerAction( 
