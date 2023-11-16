@@ -24,16 +24,25 @@ import {
     SceneLoader,
     ExecuteCodeAction,
     ActionManager,
-    Animation,
     AnimationPropertiesOverride,
-    Skeleton,
-    AnimationGroup,
+    
     
     
     
   } from "@babylonjs/core";
-import { sceneUboDeclaration } from "@babylonjs/core/Shaders/ShadersInclude/sceneUboDeclaration";
-import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoaderAnimation";
+   import HavokPhysics from "@babylonjs/havok"; 
+   import { HavokPlugin, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core"; 
+   
+   //-------------------------------------------
+      //initializing physics engine
+      let initializedHavok; 
+      HavokPhysics().then((havok) => { 
+      initializedHavok = havok; 
+      });
+      const havokInstance = await HavokPhysics();
+      const havokPlugin = new HavokPlugin(true, havokInstance);
+ 
+globalThis.HK = await HavokPhysics();
   //--------------------------------------------
   //middle of code - functions
   function createBox(scene: Scene, px:number,py:number,pz:number,sx:number,sy:number,sz:number) {
@@ -41,6 +50,7 @@ import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoa
     box.position = new Vector3(px,py,pz);
     box.scaling = new Vector3(sx,sy,sz);
     box.receiveShadows = true;
+    const boxAggregate = new PhysicsAggregate(box, PhysicsShapeType.BOX, { mass: 1 }, scene);
     return box;
   }
   //faced box function
@@ -133,15 +143,15 @@ import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoa
         
       return scene;
   }
-  function createGround(scene: Scene) {
-    let ground = MeshBuilder.CreateGround(
-      "ground",
-      { width: 50, height: 50 },
-      scene,
-    );
-    ground.receiveShadows = true;
-    return ground;
-  }
+ 
+    
+   function createGround(scene: Scene) {
+    const ground: Mesh = MeshBuilder.CreateGround("ground", {height: 10, width: 10, 
+   subdivisions: 4});
+    const groundAggregate = new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, 
+   scene);
+    return ground; 
+   } 
   
   function createArcRotateCamera(scene: Scene) {
     let camAlpha = -Math.PI / 2,
@@ -165,10 +175,12 @@ import { WeightAnimationPropertyInfo } from "@babylonjs/loaders/glTF/2.0/glTFLoa
   let currentspeed:number = 0.1;
   let walkspeed:number = 0.1; 
   let runspeed:number = 0.3;
-function importPlayerMesh(scene, x: number, y: number) {
+function importPlayerMesh(scene,collider:Mesh, x: number, y: number) {
 let tempItem = { flag: false } 
 
- let item = SceneLoader.ImportMesh("", "./Models/", "dummy3.babylon", scene, 
+ let item:any = SceneLoader.ImportMesh("", "./Models/", "dummy3.babylon", scene, 
+ 
+ 
 function(newMeshes,particleSystems,skeletons) {
   let animating: boolean = false; 
 let mesh = newMeshes[0]; 
@@ -247,7 +259,17 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
     animating = false; 
     scene.stopAnimation(skeleton);
    } 
- })})
+   //collision
+    if(mesh.intersectsMesh(collider)){
+      console.log("Collided");
+    }
+ });
+  // physics collision
+  item = mesh; 
+  let playerAggregate = new PhysicsAggregate(item, PhysicsShapeType.CAPSULE, { mass: 0
+  }, scene);
+  playerAggregate.body.disablePreStep = false;
+});
  return item;
 }
  function actionManager(scene: Scene){
@@ -293,14 +315,14 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
   
     let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show()
-    
+    that.scene.enablePhysics(new Vector3(0, -9.8, 0), havokPlugin); //enables physics
   //create box with pos in first three and scale in last three digits
-   // that.box = createBox(that.scene,2,5,3,10,5,2);
+    that.box = createBox(that.scene,2,5,3,10,5,2);
     that.sphere = createSphere(that.scene,1,4,7);
     that.sphere = createSphere(that.scene,3,6,8);
     that.ground = createGround(that.scene);
     that.camera = createArcRotateCamera(that.scene);
-    that.importMesh = importPlayerMesh(that.scene,0,0);
+    that.importMesh = importPlayerMesh(that.scene,that.box,0,0);
     createskybox(that.scene);
     createdirectionallight(that.scene,that.sphere,1,-1,-0.5,-1);
     createdirectionallight(that.scene,that.sphere,0.5,1, -2, 1);
