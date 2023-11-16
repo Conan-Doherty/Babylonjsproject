@@ -42,7 +42,7 @@ import {
       const havokInstance = await HavokPhysics();
       const havokPlugin = new HavokPlugin(true, havokInstance);
  
-globalThis.HK = await HavokPhysics();
+     globalThis.HK = await HavokPhysics();
   //--------------------------------------------
   //middle of code - functions
   function createBox(scene: Scene, px:number,py:number,pz:number,sx:number,sy:number,sz:number) {
