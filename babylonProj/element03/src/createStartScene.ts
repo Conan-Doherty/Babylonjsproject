@@ -108,11 +108,14 @@ import {
      light.intensity = intensity;
   }
   
-  function createspotlight(scene: Scene,px:number,py:number,pz:number){
+  function createspotlight(scene: Scene,px:number,py:number,pz:number,dx:number,dy:number,dz:number){
     var light = new SpotLight("spotLight", new Vector3(-1, 1, -1), new Vector3(0, -1, 0), Math.PI / 2, 10, scene);
     light.diffuse = new Color3(0.02, 0.97, 0.81);
     light.specular = new Color3(1, 1, 1);
     light.intensity = 2;
+    light.direction.x = dx;
+    light.direction.y = dy;
+    light.direction.z = dz;
     
     return light;
   }
@@ -324,6 +327,7 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
     that.camera = createArcRotateCamera(that.scene);
     that.importMesh = importPlayerMesh(that.scene,that.box,0,0);
     createskybox(that.scene);
+    createspotlight(that.scene,2,2,2,1,0,0);
     createdirectionallight(that.scene,that.sphere,1,-1,-0.5,-1);
     createdirectionallight(that.scene,that.sphere,0.5,1, -2, 1);
     that.actionManager = actionManager(that.scene);
