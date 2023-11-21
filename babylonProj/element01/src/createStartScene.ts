@@ -63,7 +63,7 @@ import {
   
   function createLight(scene: Scene) {
     const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
-    light.intensity = 0.7;
+    light.intensity = 0.5;
     
     return light;
   }
@@ -71,7 +71,7 @@ import {
     var light = new DirectionalLight("dir01", new Vector3(-1, -1, -1), scene);
 	light.position = new Vector3(20, 20, 20);
 	light.intensity = 0.5;
-   light.diffuse = new Color3(0.07, 0.87, 0.87);
+   light.diffuse = new Color3(150, 150, 150);
     var lightSphere = Mesh.CreateSphere("sphere", 10, 2, scene);
     var lightspheremat = new StandardMaterial("lightspheremat",scene)
    	lightSphere.position = light.position;
@@ -86,7 +86,7 @@ import {
   
   function createspotlight(scene: Scene,px:number,py:number,pz:number){
     var light = new SpotLight("spotLight", new Vector3(-1, 1, -1), new Vector3(0, -1, 0), Math.PI / 2, 10, scene);
-    light.diffuse = new Color3(0.02, 0.97, 0.81);
+    light.diffuse = new Color3(1, 1, 1);
     light.specular = new Color3(1, 1, 1);
     light.intensity = 2;
     
@@ -102,6 +102,26 @@ import {
     sphere.outlineColor = new Color3(1,0,1);
     sphere.receiveShadows = true;
     return sphere;
+  }
+  function createtexturedsphere(scene:Scene,px:number,py:number,pz:number){
+    let earthsphere = MeshBuilder.CreateSphere(
+      "earth",
+      { diameter: 2, segments: 32 },
+      scene,
+    );
+    earthsphere.position.x = px;
+    earthsphere.position.y = py;
+    earthsphere.position.z = pz;
+    let spheremat = new StandardMaterial("earthmat",scene);
+    spheremat.diffuseTexture = new Texture("assets/vintage-world-map-cartography-concept_52683-26377.jpg")
+    earthsphere.material = spheremat;
+    scene.registerAfterRender(function () {
+      earthsphere.rotate(new Vector3(2, 6, 4)/*axis*/,
+      .05/*angle*/, Space.LOCAL);
+      });
+    //earthsphere.receiveShadows = true;
+   // sphere.material = new Texture("assets/vintage-world-map-cartography-concept_52683-26377.jpg", scene);
+    return earthsphere;
   }
   function createskybox(scene:Scene){
     
@@ -154,7 +174,7 @@ import {
       ground?: Mesh;
       camera?: Camera;
       spotlight?:SpotLight;
-      
+      earthsphere?:Mesh;
     }
   
     let that: SceneData = { scene: new Scene(engine) };
@@ -169,6 +189,7 @@ import {
     that.facebox = createfacedbox(that.scene,6,5,8);
     createskybox(that.scene);
    createdirectionallight(that.scene,that.facebox,that.sphere);
-    
+    that.light = createLight(that.scene);
+    that.earthsphere = createtexturedsphere(that.scene,1,12,1)
     return that;
   }
