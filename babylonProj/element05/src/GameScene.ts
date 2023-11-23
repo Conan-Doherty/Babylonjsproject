@@ -334,6 +334,7 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
      that.camera = createArcRotateCamera(that.scene,that.earthsphere);
      that.Pin = ClonePin(that.scene,0,1,0,0.1,0,0,0,that.earthsphere);
      that.Pin = ClonePin(that.scene,0,0,1,0.1,1.5,0,0,that.earthsphere);
+     that.Pin = ClonePin(that.scene,0,0,-1,0.1,-1.5,0,0,that.earthsphere);
      createskybox(that.scene);
      createdirectionallight(that.scene,that.sphere,1,-1,-0.5,-1);
      createdirectionallight(that.scene,that.sphere,0.5,1, -2, 1);
