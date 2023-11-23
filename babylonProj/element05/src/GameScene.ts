@@ -29,12 +29,14 @@ import {
     Sound,
     PivotTools,
     TransformNode,
+    CreatePlane,
     
     
   } from "@babylonjs/core";
   import * as GUI from "@babylonjs/gui"; 
    import HavokPhysics from "@babylonjs/havok"; 
    import { HavokPlugin, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
+import { Label } from "@babylonjs/inspector/components/Label";
    
    //---------------------------------
 
@@ -261,21 +263,22 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
   Pin.position.y = 1;
   Pin.position.x = px;
   Pin.position.z = pz;
-  
   return Pin;
 } 
+var fontData = await (await fetch("https://assets.babylonjs.com/fonts/Droid Sans_Regular.json")).json();
 function ClonePin(scene:Scene,px:number,py:number,pz:number,s:number,rx:number,ry:number,rz:number,parent:Mesh){
   const tobecloned = CreatePin(scene,px,pz)
   const Clone = tobecloned.clone("clone");
   tobecloned.dispose();
   Clone.parent = parent;
-  var pivot = new TransformNode("root");
+  
   
   Clone.position.x = px;
   Clone.position.z = pz;
   Clone.position.y = py;
   Clone.scaling = new Vector3(s,s,s);
   Clone.rotation = new Vector3(rx,ry,rz);
+  
   return Clone;
 }
 function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number){
@@ -315,14 +318,8 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
     earthsphere.rotation.y += .2;
     keydown = true; 
     }
-    if(keyDownMap["Shift"] || keyDownMap["LeftShift"]) {
-      currentspeed = runspeed; 
-      shiftdown = true;
-    }})
-  // scene.registerAfterRender(function () {
-  //   earthsphere.rotate(new Vector3(2, 6, 4)/*axis*/,
-  //   .05/*angle*/, Space.LOCAL);
-  //   });
+    })
+  
   //earthsphere.receiveShadows = true;
  // sphere.material = new Texture("assets/vintage-world-map-cartography-concept_52683-26377.jpg", scene);
   return earthsphere;
