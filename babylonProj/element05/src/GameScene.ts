@@ -291,7 +291,34 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
   let spheremat = new StandardMaterial("earthmat",scene);
   spheremat.diffuseTexture = new Texture("assets/top-view-world-map-background_1308-68322.jpg")
   earthsphere.material = spheremat;
-  
+  scene.onBeforeRenderObservable.add(()=> { 
+    let keydown: boolean = false;
+    let shiftdown:boolean = false;
+    
+    if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
+    
+    earthsphere.rotation.x += .2; 
+    keydown = true; 
+    } 
+    if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
+    
+    earthsphere.rotation.y -= .2;
+    keydown = true; 
+    } 
+    if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
+     
+    earthsphere.rotation.x -= .2;
+    keydown = true; 
+    } 
+    if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
+    
+    earthsphere.rotation.y += .2;
+    keydown = true; 
+    }
+    if(keyDownMap["Shift"] || keyDownMap["LeftShift"]) {
+      currentspeed = runspeed; 
+      shiftdown = true;
+    }})
   // scene.registerAfterRender(function () {
   //   earthsphere.rotate(new Vector3(2, 6, 4)/*axis*/,
   //   .05/*angle*/, Space.LOCAL);
