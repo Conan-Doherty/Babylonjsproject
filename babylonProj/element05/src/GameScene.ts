@@ -30,13 +30,15 @@ import {
     PivotTools,
     TransformNode,
     CreatePlane,
-    
+    InterpolateValueAction,
+    ActionEvent,
     
   } from "@babylonjs/core";
   import * as GUI from "@babylonjs/gui"; 
    import HavokPhysics from "@babylonjs/havok"; 
    import { HavokPlugin, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
 import { Label } from "@babylonjs/inspector/components/Label";
+import { meshUVSpaceRendererPixelShader } from "@babylonjs/core/Shaders/meshUVSpaceRenderer.fragment";
    
    //---------------------------------
 
@@ -115,7 +117,7 @@ import { Label } from "@babylonjs/inspector/components/Label";
   }
   function createskybox(scene:Scene){
     
-    var skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+    var skybox = MeshBuilder.CreateBox("skyBox", {size:2000.0}, scene);
     var skyboxMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("assets/skybox", scene);
@@ -148,7 +150,7 @@ import { Label } from "@babylonjs/inspector/components/Label";
   let currentspeed:number = 0.1;
   let walkspeed:number = 0.1; 
   let runspeed:number = 0.3;
-function importPlayerMesh(scene,collider:Mesh, x: number, y: number) {
+function importPlayerMesh(scene,collider:Mesh,cam:Camera) {
 let tempItem = { flag: false } 
 
  let item:any = SceneLoader.ImportMesh("", "./Models/", "dummy3.babylon", scene, 
@@ -175,6 +177,10 @@ var walkpara = {name:"walk",anim:idleanim,weight:1};
 var runanim = scene.animationGroups.find(a=>a.name === "YBot_Run");
 var runpara = {name:"Run",anim:idleanim,weight:1};
 */
+mesh.parent = cam;
+mesh.position.z = 3;
+mesh.position.x = -2;
+mesh.position.y = -1;
  scene.onBeforeRenderObservable.add(()=> { 
   let keydown: boolean = false;
   
@@ -226,6 +232,7 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
   }, scene);
   playerAggregate.body.disablePreStep = false;
 });
+   
  return item;
 }
  function actionManager(scene: Scene){
@@ -248,6 +255,7 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
   function(evt) {keyDownMap[evt.sourceEvent.key] = false; }
   ) 
   );
+  
   return scene.actionManager; 
  } 
  function CreatePin(scene:Scene,px:number,pz:number){
@@ -265,9 +273,28 @@ var runpara = {name:"Run",anim:idleanim,weight:1};
   Pin.position.z = pz;
   return Pin;
 } 
-var fontData = await (await fetch("https://assets.babylonjs.com/fonts/Droid Sans_Regular.json")).json();
+function addtext(scene:Scene,m:Mesh,s:string){
+  var plane = MeshBuilder.CreatePlane("textplane",{width:4,height:2});
+  plane.parent = m;
+  plane.position.y = 2;
+  plane.rotation.x = 2;
+  plane.name = s;
+  m.name = s;
+  var advancedTexture = GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+  var button = new GUI.TextBlock();
+  button.text = s;
+  button.width = 1;
+  button.height = 0.4;
+  button.color = "white";
+  button.fontSize = 200;
+  advancedTexture.addControl(button);
+  m.isPickable = true;
+  
+  return scene;
+}
+
 function ClonePin(scene:Scene,px:number,py:number,pz:number,s:number,rx:number,ry:number,rz:number,parent:Mesh){
-  const tobecloned = CreatePin(scene,px,pz)
+  const tobecloned = CreatePin(scene,px,pz);
   const Clone = tobecloned.clone("clone");
   tobecloned.dispose();
   Clone.parent = parent;
@@ -300,22 +327,22 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
     
     if (keyDownMap["w"] || keyDownMap["ArrowUp"]) {
     
-    earthsphere.rotation.x += .2; 
+    earthsphere.rotation.x += .02; 
     keydown = true; 
     } 
     if (keyDownMap["a"] || keyDownMap["ArrowLeft"]) {
     
-    earthsphere.rotation.y -= .2;
+    earthsphere.rotation.y -= .02;
     keydown = true; 
     } 
     if (keyDownMap["s"] || keyDownMap["ArrowDown"]) {
      
-    earthsphere.rotation.x -= .2;
+    earthsphere.rotation.x -= .02;
     keydown = true; 
     } 
     if (keyDownMap["d"] || keyDownMap["ArrowRight"]) {
     
-    earthsphere.rotation.y += .2;
+    earthsphere.rotation.y += .02;
     keydown = true; 
     }
     })
@@ -323,6 +350,59 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
   //earthsphere.receiveShadows = true;
  // sphere.material = new Texture("assets/vintage-world-map-cartography-concept_52683-26377.jpg", scene);
   return earthsphere;
+}
+function adddisplaytxt(scene:Scene){
+  var buttonbox = document.createElement('div');
+    buttonbox.id = "buttonbox";
+    buttonbox.style.position = "absolute";
+    buttonbox.style.top = "60px";
+    buttonbox.style.left = "85%";
+    buttonbox.style.border = "5pt inset blue";
+    buttonbox.style.padding = "2pt";
+    buttonbox.style.paddingRight = "2pt";
+    buttonbox.style.width = "10em";
+    buttonbox.style.display = "block";
+    document.body.appendChild(buttonbox);
+
+    var tTag = document.createElement('div');
+    tTag.id = "choose";
+    tTag.textContent = "Place";
+    tTag.style.textAlign = "center";
+    tTag.style.border = "2pt solid gold";
+    tTag.style.marginLeft = "1.5pt";
+    tTag.style.marginTop = "3pt";
+    tTag.style.marginBottom = "2pt";
+    tTag.style.backgroundColor = "dodgerblue";
+    tTag.style.width = "96%";
+    tTag.style.fontSize = "1.0em";
+    tTag.style.color = "white";
+    buttonbox.appendChild(tTag);
+
+
+    var header = document.createElement('div');
+    header.id = "header";
+    header.textContent = "No Picked Pin";
+    header.style.textAlign = "center";
+    header.style.border = "2pt solid red";
+    header.style.marginLeft = "1.5pt";
+    header.style.backgroundColor = "teal";
+    header.style.width = "96%";
+    header.style.fontSize = "1.0em";
+    header.style.color = "black";
+    buttonbox.appendChild(header);
+    
+    window.addEventListener("click", function () {
+      // We try to pick an object
+      let pickResult = scene.pick(scene.pointerX, scene.pointerY);
+      if (pickResult.hit) {
+              
+              header.textContent = pickResult.pickedMesh.name;
+              }else{
+                 header.textContent = "No Picked Mesh"; 
+              }
+      })
+
+    
 }
   //------------------------------------------
   //bottom of code - main rendering area for scene
@@ -353,12 +433,16 @@ function createtexturedsphere(scene:Scene,px:number,py:number,pz:number,s:number
     that.sphere = createSphere(that.scene,1,4,7);
     that.sphere = createSphere(that.scene,3,6,8);
      
-     
+     adddisplaytxt(that.scene);
      that.earthsphere = createtexturedsphere(that.scene,0,0,0,100);
      that.camera = createArcRotateCamera(that.scene,that.earthsphere);
-     that.Pin = ClonePin(that.scene,0,1,0,0.1,0,0,0,that.earthsphere);
-     that.Pin = ClonePin(that.scene,0,0,1,0.1,1.5,0,0,that.earthsphere);
-     that.Pin = ClonePin(that.scene,0,0,-1,0.1,-1.5,0,0,that.earthsphere);
+     importPlayerMesh(that.scene,that.earthsphere,that.camera)
+     that.Pin = ClonePin(that.scene,0,1,0,0.1,0,0,0,that.earthsphere,);
+     addtext(that.scene,that.Pin,"Arctic");
+     that.Pin = ClonePin(that.scene,0,-1,0,0.1,0,0,3.2,that.earthsphere,);
+     addtext(that.scene,that.Pin,"Antarctica");
+     that.Pin = ClonePin(that.scene,.2,0.45,-0.85,0.1,-1,-.2,0,that.earthsphere,);
+     addtext(that.scene,that.Pin,"China");
      createskybox(that.scene);
      createdirectionallight(that.scene,that.sphere,1,-1,-0.5,-1);
      createdirectionallight(that.scene,that.sphere,0.5,1, -2, 1);

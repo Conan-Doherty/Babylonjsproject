@@ -188,7 +188,7 @@ import {
     that.camera = createArcRotateCamera(that.scene);
     that.facebox = createfacedbox(that.scene,6,5,8);
     createskybox(that.scene);
-   createdirectionallight(that.scene,that.facebox,that.sphere);
+    createdirectionallight(that.scene,that.facebox,that.sphere);
     that.light = createLight(that.scene);
     that.earthsphere = createtexturedsphere(that.scene,1,12,1)
     return that;
