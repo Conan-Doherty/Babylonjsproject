@@ -27,6 +27,9 @@ import {
     ActionManager,
     AnimationPropertiesOverride,
     Sound,
+    CreateText,
+    CreatePlane,
+    PlaneBlock,
    
     
     
@@ -36,7 +39,8 @@ import {
    import { HavokPlugin, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
    //---------------------------------
    function createSceneButton(scene: Scene, name: string, index: string, x: string, y: string, advtex) {
-
+    var panel = new GUI.StackPanel();
+    advtex.addControl(panel);
     var button = GUI.Button.CreateSimpleButton(name, index);
         button.left = x;
         button.top = y;
@@ -44,7 +48,7 @@ import {
         button.height = "60px";
         button.color = "white";
         button.cornerRadius = 20;
-        button.background = "green";
+        button.background = "Black";
         const buttonClick = new Sound("MenuClickSFX", "./assets/menu-click.wav", scene, null, {
           loop: false, 
           autoplay: false, 
@@ -54,10 +58,26 @@ import {
           setSceneIndex(1);
           gamemusic(scene);
         });
-        advtex.addControl(button);
+        panel.addControl(button);
+
+    
         return button;
  
  }
+  function addtitle(scene:Scene,name:string,index:string,x:string,y:string,advtex){
+    var title = new GUI.TextBlock(name,index);
+    title.text = index;
+    title.left = x;
+    title.top = y;
+    title.width = "160px";
+    title.height = "60px";
+    title.color = "white";
+    title.fontSize = 20;
+    advtex.addControl(title);
+    return title;
+  }
+ 
+ 
  function gamemusic(scene:Scene){
   const music = new Sound("Music", "assets/611422__gregorquendel__short-synth-intro-background.wav", scene, null, {
     loop: true,
@@ -128,9 +148,11 @@ import {
     let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
     let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("myUI",true);
-    let button = createSceneButton(that.scene,"but1","Start Game","0px","-75px",advancedTexture);
-      that.camera = createArcRotateCamera(that.scene);
-      createskybox(that.scene);
-      that.light = createLight(that.scene);
+    let UI = addtitle(that.scene,"title","Element 5","0px","-60px",advancedTexture);
+    let UI1 = createSceneButton(that.scene,"but1","Start Game","0px","-75px",advancedTexture);
+    
+    that.camera = createArcRotateCamera(that.scene);
+    createskybox(that.scene);
+    that.light = createLight(that.scene);
     return that;
   }
