@@ -1,7 +1,7 @@
 //------------------------------------------------
 //importing bbyjs
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+//import "@babylonjs/inspector";
 import {
     Scene,
     ArcRotateCamera,

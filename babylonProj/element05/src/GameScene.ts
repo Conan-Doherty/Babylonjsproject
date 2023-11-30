@@ -2,7 +2,7 @@
 //importing bbyjs
 import setSceneIndex from "./index";
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+//import "@babylonjs/inspector";
 import {
     Scene,
     ArcRotateCamera,
@@ -33,11 +33,12 @@ import {
     InterpolateValueAction,
     ActionEvent,
     
+    
   } from "@babylonjs/core";
   import * as GUI from "@babylonjs/gui"; 
    import HavokPhysics from "@babylonjs/havok"; 
    import { HavokPlugin, PhysicsAggregate, PhysicsShapeType } from "@babylonjs/core";
-import { Label } from "@babylonjs/inspector/components/Label";
+//import { Label } from "@babylonjs/inspector/components/Label";
 import { meshUVSpaceRendererPixelShader } from "@babylonjs/core/Shaders/meshUVSpaceRenderer.fragment";
    
    //---------------------------------
@@ -68,6 +69,7 @@ import { meshUVSpaceRendererPixelShader } from "@babylonjs/core/Shaders/meshUVSp
   //   return box;
   // }
   //faced box function
+  
   function createLight(scene: Scene) {
     const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
     light.intensity = 0.7;
@@ -273,7 +275,7 @@ mesh.position.y = -1;
   Pin.position.z = pz;
   return Pin;
 } 
-function addtext(scene:Scene,m:Mesh,s:string){
+function addtext(scene:Scene,m:any,s:string){
   var plane = MeshBuilder.CreatePlane("textplane",{width:4,height:2});
   plane.parent = m;
   plane.position.y = 2;
@@ -394,7 +396,7 @@ function adddisplaytxt(scene:Scene){
     window.addEventListener("click", function () {
       // We try to pick an object
       let pickResult = scene.pick(scene.pointerX, scene.pointerY);
-      if (pickResult.hit) {
+      if (pickResult.hit&& pickResult != null) {
               
               header.textContent = pickResult.pickedMesh.name;
               }else{

@@ -2,7 +2,7 @@
 //importing bbyjs
 import setSceneIndex from "./index";
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+//import "@babylonjs/inspector";
 import {
     Scene,
     ArcRotateCamera,
@@ -158,8 +158,7 @@ import {
    function createGround(scene: Scene) {
     const ground: Mesh = MeshBuilder.CreateGround("ground", {height: 10, width: 10, 
    subdivisions: 4});
-    const groundAggregate = new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 }, 
-   scene);
+   const groundAggregate = new PhysicsAggregate(ground, PhysicsShapeType.BOX, { mass: 0 },scene);
     return ground; 
    } 
   

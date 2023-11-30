@@ -2,7 +2,7 @@
 //importing bbyjs
 import setSceneIndex from "./index";
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+//import "@babylonjs/inspector";
 import {
     Scene,
     ArcRotateCamera,
@@ -52,11 +52,18 @@ import {
         button.onPointerUpObservable.add(function() {
           buttonClick.play();
           setSceneIndex(1);
+          gamemusic(scene);
         });
         advtex.addControl(button);
         return button;
  
  }
+ function gamemusic(scene:Scene){
+  const music = new Sound("Music", "assets/611422__gregorquendel__short-synth-intro-background.wav", scene, null, {
+    loop: true,
+    autoplay: true,
+  });
+}
   function createLight(scene: Scene) {
     const light = new HemisphericLight("light", new Vector3(0, 1, 0), scene);
     light.intensity = 0.7;

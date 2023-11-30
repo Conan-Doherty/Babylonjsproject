@@ -1,7 +1,7 @@
 //------------------------------------------------
 //importing bbyjs
 import "@babylonjs/core/Debug/debugLayer";
-import "@babylonjs/inspector";
+//import "@babylonjs/inspector";
 import {
     Scene,
     ArcRotateCamera,
@@ -178,7 +178,7 @@ import {
     return Pin;
   } 
   function ClonePin(scene:Scene,px:number,pz:number){
-    const tobecloned = CreatePin(scene,px,pz)
+    const tobecloned = CreatePin(scene,px,pz);
     const Clone = tobecloned.clone("clone");
     tobecloned.dispose();
     Clone.position.x = px;
