@@ -41,6 +41,15 @@ import {
    function createSceneButton(scene: Scene, name: string, index: string, x: string, y: string, advtex) {
     var panel = new GUI.StackPanel();
     advtex.addControl(panel);
+    var title = new GUI.TextBlock(name,index);
+    title.text = "Element 5";
+    title.left = x;
+    title.top = y;
+    title.width = "160px";
+    title.height = "60px";
+    title.color = "white";
+    title.fontSize = 20;
+    panel.addControl(title);
     var button = GUI.Button.CreateSimpleButton(name, index);
         button.left = x;
         button.top = y;
@@ -59,23 +68,12 @@ import {
           gamemusic(scene);
         });
         panel.addControl(button);
+        
 
     
-        return button;
+        return scene;
  
  }
-  function addtitle(scene:Scene,name:string,index:string,x:string,y:string,advtex){
-    var title = new GUI.TextBlock(name,index);
-    title.text = index;
-    title.left = x;
-    title.top = y;
-    title.width = "160px";
-    title.height = "60px";
-    title.color = "white";
-    title.fontSize = 20;
-    advtex.addControl(title);
-    return title;
-  }
  
  
  function gamemusic(scene:Scene){
@@ -148,7 +146,6 @@ import {
     let that: SceneData = { scene: new Scene(engine) };
     that.scene.debugLayer.show();
     let advancedTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("myUI",true);
-    let UI = addtitle(that.scene,"title","Element 5","0px","-60px",advancedTexture);
     let UI1 = createSceneButton(that.scene,"but1","Start Game","0px","-75px",advancedTexture);
     
     that.camera = createArcRotateCamera(that.scene);
