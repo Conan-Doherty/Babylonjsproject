@@ -113,7 +113,7 @@ import {
     earthsphere.position.y = py;
     earthsphere.position.z = pz;
     let spheremat = new StandardMaterial("earthmat",scene);
-    spheremat.diffuseTexture = new Texture("assets/vintage-world-map-cartography-concept_52683-26377.jpg")
+    spheremat.diffuseTexture = new Texture("./assets/vintage-world-map-cartography-concept_52683-26377.jpg")
     earthsphere.material = spheremat;
     scene.registerAfterRender(function () {
       earthsphere.rotate(new Vector3(2, 6, 4)/*axis*/,
@@ -128,7 +128,7 @@ import {
     var skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
     var skyboxMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture("assets/skybox", scene);
+    skyboxMaterial.reflectionTexture = new CubeTexture("./assets/skybox", scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
